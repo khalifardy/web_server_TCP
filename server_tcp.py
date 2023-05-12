@@ -3,28 +3,31 @@ from library_tcp import handle_client
 import sys
 import threading
 
+def main():
+    serverName = '127.0.0.1'
+    serverPort = 8000
 
-serverName = '127.0.0.1'
-serverPort = 8000
+    try:
+        serverSocket = socket(AF_INET, SOCK_STREAM)
+        serverSocket.setsockopt(SOL_SOCKET,SO_REUSEADDR,1)
+        serverSocket.bind((serverName, serverPort))
+        serverSocket.listen()
 
-try:
-    serverSocket = socket(AF_INET, SOCK_STREAM)
-    serverSocket.setsockopt(SOL_SOCKET,SO_REUSEADDR,1)
-    serverSocket.bind((serverName, serverPort))
-    serverSocket.listen()
+        print("Server started on port %d" % serverPort)
 
-    print("Server started on port %d" % serverPort)
-
-    while True:
-        koneksi, addr = serverSocket.accept()
-        client_thread = threading.Thread(target=handle_client, 
+        while True:
+            koneksi, addr = serverSocket.accept()
+            client_thread = threading.Thread(target=handle_client, 
                                          args=(koneksi,))
-        client_thread.start()
+            client_thread.start()
         
-    serverSocket.close()
-    sys.exit()
-except Exception as e:
-    print(e)
+        serverSocket.close()
+        sys.exit()
+    except Exception as e:
+        print(e)
+
+if __name__ == "__main__":
+    main()
 
 
 
